@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora de pliegos para libros</title>
+  <meta name="description" content="Herramienta didáctica para calcular cuántas páginas caben en un pliego, cuántos pliegos necesita un libro y cuánto papel se aprovecha.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="cabecera">
+      <h1>Calculadora de pliegos para libros</h1>
+      <p class="intro">Herramienta didáctica para entender cómo se imprime un libro en pliegos: cuántas páginas caben en cada pliego, cuántos pliegos necesita una tirada y cuánto papel se aprovecha.</p>
+    </header>
+
+    <noscript><p class="aviso aviso-error">Esta calculadora necesita JavaScript para funcionar.</p></noscript>
+
+    <main class="layout">
+      <!-- DATOS -->
+      <section class="card" aria-labelledby="t-datos">
+        <h2 id="t-datos">Datos</h2>
+        <form id="form" autocomplete="off" onsubmit="return false">
+
+          <div class="grupo">
+            <label class="label-title" for="paginaPreset">Formato página (cerrado, refilado)
+              <span class="tooltip-icon" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">El alto es el lado que va en el lomo. Si el libro es apaisado, el lomo va por el lado corto: introduce ese lado como alto.</span></span></span>
+            </label>
+            <select id="paginaPreset" class="input-field"></select>
+            <div class="fila">
+              <div class="campo"><span class="label-small">Ancho&nbsp;(mm)</span><input id="paginaAncho" class="input-field" type="number" min="1" step="0.5" inputmode="decimal"></div>
+              <span class="x">×</span>
+              <div class="campo"><span class="label-small">Alto, lado del lomo&nbsp;(mm)</span><input id="paginaAlto" class="input-field" type="number" min="1" step="0.5" inputmode="decimal"></div>
+            </div>
+          </div>
+
+          <div class="grupo fila">
+            <div class="campo">
+              <label class="label-title" for="paginas">Páginas
+                <span class="tooltip-icon" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Páginas del interior. Se redondean al múltiplo de 4 porque cada hoja plegada una vez aporta 4 páginas; las que sobren se imprimen en blanco.</span></span></span>
+              </label>
+              <input id="paginas" class="input-field" type="number" min="1" step="1" inputmode="numeric">
+            </div>
+            <div class="campo">
+              <label class="label-title" for="ejemplares">Ejemplares</label>
+              <input id="ejemplares" class="input-field" type="number" min="1" step="1" inputmode="numeric">
+            </div>
+          </div>
+
+          <div class="grupo">
+            <label class="label-title" for="pliegoPreset">Formato pliego</label>
+            <select id="pliegoPreset" class="input-field"></select>
+            <div class="fila">
+              <div class="campo"><span class="label-small">Ancho&nbsp;(mm)</span><input id="pliegoAncho" class="input-field" type="number" min="1" step="1" inputmode="decimal"></div>
+              <span class="x">×</span>
+              <div class="campo"><span class="label-small">Alto (mm)</span><input id="pliegoAlto" class="input-field" type="number" min="1" step="1" inputmode="decimal"></div>
+            </div>
+          </div>
+
+          <div class="grupo">
+            <span class="label-title" id="l-fibra">Fibra del papel
+              <span class="tooltip-icon" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Dirección en la que corren las fibras del papel, y es algo que se elige al comprarlo: casi todos los papeles se pueden pedir con la fibra paralela al lado largo o al corto del pliego (según el papel y las existencias). En un libro la fibra debe ir paralela al lomo, porque plegar a contrafibra agrieta el papel y el libro abre peor. Por eso, al cambiar de opción, las páginas se colocan de otra forma en el pliego. Prueba las dos para ver cuál ahorra más papel.</span></span></span>
+            </span>
+            <div class="seg" role="radiogroup" aria-labelledby="l-fibra" id="seg-fibra">
+              <button type="button" role="radio" data-valor="larga" class="activo">Paralela al lado largo</button>
+              <button type="button" role="radio" data-valor="corta">Paralela al lado corto</button>
+            </div>
+          </div>
+
+          <div class="grupo">
+            <label class="label-title" for="encuadernacion">Encuadernación
+              <span class="tooltip-icon" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">En la rústica fresada se fresan unos 3 mm del lomo de cada cuadernillo, así que cada página necesita 3 mm más en el lado del lomo. En el cosido o grapado no hace falta.</span></span></span>
+            </label>
+            <select id="encuadernacion" class="input-field">
+              <option value="cosido">Cosido o grapado (lomo sin fresar)</option>
+              <option value="fresado">Rústica fresada</option>
+            </select>
+          </div>
+
+          <div class="grupo">
+            <span class="label-title" id="l-plegados">Plegados por cuadernillo
+              <span class="tooltip-icon" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Cada plegado duplica las hojas: 1 plegado = 4 págs., 2 = 8, 3 = 16, 4 = 32 (tiro y retiro). Automático elige el mayor que cabe en el pliego. Con papel grueso conviene plegar menos.</span></span></span>
+            </span>
+            <div class="seg" role="radiogroup" aria-labelledby="l-plegados" id="seg-plegados">
+              <button type="button" role="radio" data-valor="auto" class="activo">Auto</button>
+              <button type="button" role="radio" data-valor="1">1</button>
+              <button type="button" role="radio" data-valor="2">2</button>
+              <button type="button" role="radio" data-valor="3">3</button>
+              <button type="button" role="radio" data-valor="4">4</button>
+            </div>
+          </div>
+
+          <details class="tecnicos">
+            <summary>Márgenes de la máquina (mm)</summary>
+            <div class="rejilla">
+              <div class="campo">
+                <label class="label-small" for="pinza">Pinza
+                  <span class="tooltip-icon pequeno" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Franja del borde de entrada por donde la máquina agarra el pliego. No se imprime en ella (habitual: 8 a 12 mm).</span></span></span>
+                </label>
+                <input id="pinza" class="input-field" type="number" min="0" step="0.5" inputmode="decimal">
+              </div>
+              <div class="campo">
+                <label class="label-small" for="tira">Tira de control
+                  <span class="tooltip-icon pequeno" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Franja con los parches de color y densidad que usa el impresor para ajustar la tinta (habitual: 5 a 10 mm).</span></span></span>
+                </label>
+                <input id="tira" class="input-field" type="number" min="0" step="0.5" inputmode="decimal">
+              </div>
+              <div class="campo">
+                <label class="label-small" for="seguridad">Margen seguridad
+                  <span class="tooltip-icon pequeno" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Margen libre en los demás bordes para que el pliego entre y se registre bien en la máquina.</span></span></span>
+                </label>
+                <input id="seguridad" class="input-field" type="number" min="0" step="0.5" inputmode="decimal">
+              </div>
+              <div class="campo">
+                <label class="label-small" for="marcas">Marcas (cada lado)
+                  <span class="tooltip-icon pequeno" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Espacio alrededor de cada bloque de páginas para las marcas de corte, plegado y registro.</span></span></span>
+                </label>
+                <input id="marcas" class="input-field" type="number" min="0" step="0.5" inputmode="decimal">
+              </div>
+              <div class="campo">
+                <label class="label-small" for="sangrado">Sangrado
+                  <span class="tooltip-icon pequeno" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">Imagen que sobrepasa el tamaño final de la página para evitar bordes blancos al refilar (habitual: 3 mm).</span></span></span>
+                </label>
+                <input id="sangrado" class="input-field" type="number" min="0" step="0.5" inputmode="decimal">
+              </div>
+              <div class="campo">
+                <label class="label-small" for="ladoPinza">Pinza en el lado
+                  <span class="tooltip-icon pequeno" tabindex="0" aria-label="Ayuda">?<span class="tooltip-bridge"><span class="tooltip-box">En muchas máquinas offset el pliego entra por uno de sus lados largos. Consúltalo con la imprenta.</span></span></span>
+                </label>
+                <select id="ladoPinza" class="input-field">
+                  <option value="largo">Largo</option>
+                  <option value="corto">Corto</option>
+                </select>
+              </div>
+            </div>
+          </details>
+        </form>
+      </section>
+
+      <!-- PLIEGO -->
+      <section class="card" aria-labelledby="t-pliego">
+        <h2 id="t-pliego">Pliego</h2>
+        <div id="dibujo" aria-live="polite"></div>
+        <ul id="leyenda" class="leyenda"></ul>
+        <p id="pie-dibujo" class="nota"></p>
+      </section>
+
+      <!-- RESULTADO -->
+      <section class="card" aria-labelledby="t-resultado">
+        <h2 id="t-resultado">Resultado</h2>
+        <div id="resultado" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <section id="ahorro" class="card ahorro" hidden aria-labelledby="t-ahorro"></section>
+
+    <section class="doble">
+      <div class="card" aria-labelledby="t-comparativa">
+        <h2 id="t-comparativa">Comparativa por número de plegados</h2>
+        <div class="tabla-scroll"><table id="tabla" class="tabla"></table></div>
+        <p class="nota">Pulsa una fila para probar ese plegado. Compara la columna «Cuadernillos» con la de «Pliegos totales»: si una fila usa menos pliegos pero más cuadernillos por libro, el ahorro procede de repetir un bloque pequeño varias veces en el mismo pliego. Cada cuadernillo distinto supone una forma de impresión propia (planchas y puesta en marcha), además de plegado, alzado y cosido, y eso puede costar más que el papel ahorrado. Cuando se suben los plegados sin repeticiones, en cambio, bajan a la vez los pliegos y los cuadernillos.</p>
+      </div>
+      <div class="card" aria-labelledby="t-desglose">
+        <h2 id="t-desglose">¿Dónde se va el papel?</h2>
+        <div id="desglose"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <details class="como">
+        <summary>Cómo se calcula</summary>
+        <ul>
+          <li><strong>Páginas por pliego.</strong> Cada plegado duplica las hojas. Un pliego impreso por las dos caras (tiro y retiro) da 4 páginas con 1 plegado, 8 con 2, 16 con 3 y 32 con 4. Por eso el total de páginas es siempre múltiplo de 4.</li>
+          <li><strong>Fibra.</strong> El último plegado es el lomo y debe ir paralelo a la fibra. Esto fija la orientación de las páginas en el pliego, de modo que la calculadora no muestra piezas giradas a contrafibra.</li>
+          <li><strong>Márgenes técnicos.</strong> Del pliego se descuentan la pinza, la tira de control y el margen de seguridad. Alrededor de cada bloque de páginas se reserva además el espacio de las marcas.</li>
+          <li><strong>Sangrado y separaciones.</strong> Entre páginas que se refilan (cabeza, pie y canal) queda una separación de dos veces el sangrado. En el lomo cosido las páginas se tocan; en la rústica fresada se añaden 3 mm por página.</li>
+          <li><strong>Resto de cuadernillos.</strong> Si el total no es múltiplo del cuadernillo, el resto se reparte en cuadernillos menores (4, 8, 16 páginas). Estos pueden repetirse varias veces en un mismo pliego y cortarse después, lo que reduce los pliegos necesarios.</li>
+          <li><strong>Qué no incluye.</strong> El desplazamiento por plegado (creep) en libros gruesos, la cubierta, las guardas, ni las hojas de ajuste o merma de arranque. Los márgenes por defecto son orientativos y varían según la máquina.</li>
+        </ul>
+        <p class="consulta"><strong>Recuerda consultar siempre con tu impresor antes de tomar decisiones: no todos los papeles llegan en el mismo tamaño ni con la misma fibra, y los márgenes técnicos dependen de la máquina.</strong></p>
+      </details>
+    </section>
+
+    <footer class="pie">
+      <p class="firma">
+        © 2026 Iván Huelves Illas –
+        <a href="https://github.com/ivan-huelves" target="_blank" rel="noopener">GitHub</a> –
+        <a href="https://www.linkedin.com/in/ivan-huelves-illas/" target="_blank" rel="noopener">LinkedIn</a> –
+        <bdo dir="rtl" class="correo">se.dirdamdsed@sevleuhi</bdo>
+      </p>
+      <p class="firma"><a href="https://ko-fi.com/ivanhuelves" target="_blank" rel="noopener">Invítame a un café ☕</a></p>
+    </footer>
+  </div>
+
+  <script src="engine.js"></script>
+  <script src="dibujo.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
